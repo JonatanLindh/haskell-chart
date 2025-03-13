@@ -23,3 +23,8 @@ sparklines.png
 sparklines.svg
 .ghc.environment.*
 cabal.project.local
+
+# nix
+/.envrc
+/result
+/.direnv
