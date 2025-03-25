@@ -54,7 +54,7 @@ plotHeatMap ::
 plotHeatMap phm =
   Plot
     { _plot_render = renderPlotHeatMap phm
-    , _plot_legend = [(_plot_heatmap_title phm, renderPlotLegendVectors phm)]
+    , _plot_legend = [(_plot_heatmap_title phm, renderPlotLegendHeatMap phm)]
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
     }
 
@@ -63,9 +63,23 @@ renderPlotHeatMap ::
   PlotHeatMap x y z ->
   PointMapFn x y ->
   BackendProgram ()
-renderPlotHeatMap = undefined
+renderPlotHeatMap p pmap =
+  mapM_ (drawPoint ps . pmap') (_plot_heatmap_grid p)
+ where
+  pmap' = mapXY pmap
+  ps =
+    def
+      { _point_color = opaque blue
+      }
 
-renderPlotLegendVectors = undefined
+renderPlotLegendHeatMap :: PlotHeatMap x y z -> Rect -> BackendProgram ()
+renderPlotLegendHeatMap p (Rect p1 p2) = do
+  drawPoint ps (Point (p_x p1) y)
+  drawPoint ps (Point ((p_x p1 + p_x p2) / 2) y)
+  drawPoint ps (Point (p_x p2) y)
+ where
+  ps = def
+  y = (p_y p1 + p_y p2) / 2
 
 defaultColors :: [(Double, AlphaColour Double)]
 defaultColors = [(-1, opaque blue), (0, opaque white), (1, opaque red)]
