@@ -24,7 +24,7 @@
           };
         };
 
-        packages.default = self'.packages.Chart;
+        packages.default = self'.packages.test;
       };
     };
 }
