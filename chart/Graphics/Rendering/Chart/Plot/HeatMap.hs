@@ -15,6 +15,7 @@ module Graphics.Rendering.Chart.Plot.HeatMap (
   plot_heatmap_grid,
   plot_heatmap_mapf,
   defaultHeatMap,
+  plotHeatMap
 ) where
 
 import Control.Lens
