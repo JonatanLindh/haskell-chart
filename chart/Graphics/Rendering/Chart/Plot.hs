@@ -37,4 +37,4 @@ import Graphics.Rendering.Chart.Plot.Annotation
 import Graphics.Rendering.Chart.Plot.AreaSpots
 import Graphics.Rendering.Chart.Plot.Pie
 import Graphics.Rendering.Chart.Plot.Histogram
-import Graphics.Rendering.Chart.Plot.Heatmap
+import Graphics.Rendering.Chart.Plot.HeatMap
