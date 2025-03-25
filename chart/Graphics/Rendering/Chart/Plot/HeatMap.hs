@@ -15,7 +15,7 @@ module Graphics.Rendering.Chart.Plot.HeatMap (
   plot_heatmap_grid,
   plot_heatmap_mapf,
   defaultHeatMap,
-  plotHeatMap
+  plotHeatMap,
 ) where
 
 import Control.Lens
@@ -26,9 +26,9 @@ import Data.Colour (
  )
 import Data.Colour.Names (blue, red, white)
 import Data.Default.Class
-import Graphics.Rendering.Chart.Axis.Types (PlotValue (fromValue))
+import Graphics.Rendering.Chart.Axis.Types (PlotValue (fromValue, toValue))
 import Graphics.Rendering.Chart.Drawing
-import Graphics.Rendering.Chart.Geometry
+import Graphics.Rendering.Chart.Geometry hiding (xy)
 import Graphics.Rendering.Chart.Plot.Types
 
 {- | FIXME
@@ -65,13 +65,16 @@ renderPlotHeatMap ::
   PointMapFn x y ->
   BackendProgram ()
 renderPlotHeatMap p pmap =
-  mapM_ (drawPoint ps . pmap') (_plot_heatmap_grid p)
+  mapM_ draw (_plot_heatmap_grid p)
  where
-  pmap' = mapXY pmap
-  ps =
-    def
-      { _point_color = opaque blue
-      }
+  draw xy = drawPoint ps (mapXY pmap xy)
+   where
+    z = f xy
+    c = gradient (toValue z)
+    ps = filledPolygon 2 4 False c
+
+  f = _plot_heatmap_mapf p
+  gradient = _plot_heatmap_gradient p
 
 renderPlotLegendHeatMap :: PlotHeatMap x y z -> Rect -> BackendProgram ()
 renderPlotLegendHeatMap p (Rect p1 p2) = do
