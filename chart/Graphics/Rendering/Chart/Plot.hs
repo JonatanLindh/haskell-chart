@@ -21,6 +21,7 @@ module Graphics.Rendering.Chart.Plot(
     module Graphics.Rendering.Chart.Plot.AreaSpots,
     module Graphics.Rendering.Chart.Plot.Pie,
     module Graphics.Rendering.Chart.Plot.Histogram,
+    module Graphics.Rendering.Chart.Plot.Heatmap,
 ) where
 
 import Graphics.Rendering.Chart.Plot.Types
@@ -36,3 +37,4 @@ import Graphics.Rendering.Chart.Plot.Annotation
 import Graphics.Rendering.Chart.Plot.AreaSpots
 import Graphics.Rendering.Chart.Plot.Pie
 import Graphics.Rendering.Chart.Plot.Histogram
+import Graphics.Rendering.Chart.Plot.Heatmap
