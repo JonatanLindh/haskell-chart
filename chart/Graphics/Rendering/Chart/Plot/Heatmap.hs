@@ -17,7 +17,6 @@ module Graphics.Rendering.Chart.Plot.HeatMap
     , defaultHeatMap) where
 
 import           Control.Lens
-import           Graphics.Rendering.Chart.Geometry
 import           Graphics.Rendering.Chart.Drawing
 import           Graphics.Rendering.Chart.Plot.Types
 import           Data.Default.Class
@@ -31,7 +30,15 @@ data HeatMap x y z = HeatMap { _heatmap_title :: String
                              , _heatmap_mapf :: (x, y) -> z
                              }
 
-defaultColors = [(-1, opaque (rgbtoC)), (0, opaque white),(1, opaque red )]
+mapGrid :: (PlotValue x, PlotValue y, PlotValue z)
+        => [(x, y)]
+        -> ((x, y) -> z)
+        -> [((x, y), z)]
+mapGrid grid f = map (\xy -> (xy, f xy)) grid
+
+
+
+defaultColors = [(-1, opaque (rgbtoC)), (0, opaque white), (1, opaque red)]
 
 defaultGradient :: PlotValue z => z -> AlphaColour Double
 defaultGradient z = undefined
