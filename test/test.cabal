@@ -1,0 +1,39 @@
+Name: test
+Version: 1.9.4
+License: BSD3
+License-file: LICENSE
+Copyright: Tim Docker, 2006-2014
+Author: Tim Docker <tim@dockerz.net>
+Maintainer: Tim Docker <tim@dockerz.net>
+Homepage: https://github.com/timbod7/haskell-chart/wiki
+Synopsis: Tests of the Charts library.
+Description: Tests of the Charts library.
+Category: Graphics
+Cabal-Version: >= 1.10
+Build-Type: Simple
+
+
+source-repository head
+  type:     git
+  location: https://github.com/timbod7/haskell-chart
+
+Executable test
+  Build-Depends:
+    base >= 3 && < 5,
+    Chart           >= 1.9 && < 1.10,
+    Chart-cairo     >= 1.9 && < 1.10,
+    Chart-gtk       >= 1.9 && < 1.10,
+    Chart-diagrams  >= 1.9 && < 1.10
+    
+  Main-is: main.hs
+  Hs-Source-Dirs: ./
+  Ghc-Options: -threaded
+  default-language:    Haskell2010
+
+test-suite doctests
+  type:                exitcode-stdio-1.0
+  main-is:             Doctests.hs
+  build-depends:       base >= 4.7 && < 5
+                     , doctest >= 0.8
+  default-language:    Haskell2010
+  Hs-Source-Dirs:      tests
