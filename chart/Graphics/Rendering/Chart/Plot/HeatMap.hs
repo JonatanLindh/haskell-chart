@@ -94,4 +94,7 @@ defaultHeatMap =
     , _plot_heatmap_mapf = const (fromValue 1)
     }
 
+instance (PlotValue x, PlotValue y, PlotValue z) => Default (PlotHeatMap x y z) where
+  def = defaultHeatMap
+
 $(makeLenses ''PlotHeatMap)
