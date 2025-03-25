@@ -65,7 +65,8 @@ library
         Graphics.Rendering.Chart.Plot.Vectors,
         Graphics.Rendering.Chart.Plot.Pie,
         Graphics.Rendering.Chart.Plot.Points,
-        Graphics.Rendering.Chart.Plot.Histogram
+        Graphics.Rendering.Chart.Plot.Histogram,
+        Graphics.Rendering.Chart.Plot.Heatmap
         Graphics.Rendering.Chart.SparkLine
         Graphics.Rendering.Chart.Backend
         Graphics.Rendering.Chart.Backend.Impl

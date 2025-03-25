@@ -8,7 +8,7 @@
 
 {-# LANGUAGE TemplateHaskell #-}
 
-module Graphics.Rendering.Chart.Plot.Heatmap () where
+module Graphics.Rendering.Chart.Plot.Heatmap (Heatmap) where
 
 import           Control.Lens
 import           Graphics.Rendering.Chart.Geometry
