@@ -16,6 +16,7 @@
             mkShellArgs = rec {
               buildInputs = with pkgs; [
                 pkg-config
+                gtk3
               ];
 
               LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath buildInputs;
