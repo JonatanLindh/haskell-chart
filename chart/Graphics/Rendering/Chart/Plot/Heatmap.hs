@@ -8,7 +8,13 @@
 
 {-# LANGUAGE TemplateHaskell #-}
 
-module Graphics.Rendering.Chart.Plot.HeatMap (defaultHeatMap) where
+module Graphics.Rendering.Chart.Plot.HeatMap
+    ( HeatMap(..)
+    , heatmap_title
+    , heatmap_gradient
+    , heatmap_grid
+    , heatmap_mapf
+    , defaultHeatMap) where
 
 import           Control.Lens
 import           Graphics.Rendering.Chart.Geometry
@@ -36,3 +42,5 @@ defaultHeatMap = HeatMap { _heatmap_title = "Heatmap: Default"
                           , _heatmap_grid = []
                           , _heatmap_mapf = const 1
                           }
+
+$(makeLenses ''HeatMap)
