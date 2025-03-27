@@ -30,6 +30,7 @@ import Graphics.Rendering.Chart.Axis.Types (PlotValue (fromValue, toValue))
 import Graphics.Rendering.Chart.Drawing
 import Graphics.Rendering.Chart.Geometry hiding (xy)
 import Graphics.Rendering.Chart.Plot.Types
+import Graphics.Rendering.Chart.Renderable (Rectangle (Rectangle, _rect_fillStyle, _rect_minsize), drawRectangle)
 
 {- | FIXME
 ?Should? Be? z -> AlphaColour Double
@@ -40,13 +41,6 @@ data PlotHeatMap x y z = HeatMap
   , _plot_heatmap_grid :: [(x, y)]
   , _plot_heatmap_mapf :: (x, y) -> z
   }
-
-mapGrid ::
-  (PlotValue x, PlotValue y, PlotValue z) =>
-  [(x, y)] ->
-  ((x, y) -> z) ->
-  [((x, y), z)]
-mapGrid grid f = map (\xy -> (xy, f xy)) grid
 
 plotHeatMap ::
   (PlotValue x, PlotValue y, PlotValue z) =>
@@ -67,14 +61,36 @@ renderPlotHeatMap ::
 renderPlotHeatMap p pmap =
   mapM_ draw (_plot_heatmap_grid p)
  where
-  draw xy = drawPoint ps (mapXY pmap xy)
+  draw xy = drawRectangle (mapXY pmap xy) rect
    where
+    rect =
+      def
+        { _rect_minsize = (unitX, unitY)
+        , _rect_fillStyle = Just (FillStyleSolid c)
+        }
+
     z = f xy
     c = gradient (toValue z)
-    ps = filledPolygon 2 4 False c
 
   f = _plot_heatmap_mapf p
   gradient = _plot_heatmap_gradient p
+
+  (pts_x, pts_y) = unzip $ _plot_heatmap_grid p
+  (min_x, max_x) = minmax pts_x
+  (min_y, max_y) = minmax pts_y
+
+  xrange = toValue max_x - toValue min_x
+  yrange = toValue max_y - toValue min_y
+
+  pmin = pmap (LMin, LMin)
+  pmax = pmap (LMax, LMax)
+
+  (Vector actual_width actual_height) = psub pmax pmin
+  unitX = actual_width / xrange
+  unitY = actual_height / yrange
+
+minmax :: (Ord a) => [a] -> (a, a)
+minmax x = (foldl min (head x) x, foldl max (head x) x)
 
 renderPlotLegendHeatMap :: PlotHeatMap x y z -> Rect -> BackendProgram ()
 renderPlotLegendHeatMap p (Rect p1 p2) = do

@@ -22,7 +22,8 @@ Executable test
     Chart           >= 1.9 && < 1.10,
     Chart-cairo     >= 1.9 && < 1.10,
     Chart-gtk       >= 1.9 && < 1.10,
-    Chart-diagrams  >= 1.9 && < 1.10
+    Chart-diagrams  >= 1.9 && < 1.10,
+    hsnoise
     
   Main-is: main.hs
   Hs-Source-Dirs: ./
