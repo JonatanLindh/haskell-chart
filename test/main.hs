@@ -76,7 +76,7 @@ earthColors =
     ]
 
 ---------------------------------------
--------------- EXAMPLE 1 --------------
+-------------- EXAMPLE 2 --------------
 ---------------------------------------
 
 {- | Creates a visualization of a sine wave function on a 2D plane.
