@@ -58,16 +58,6 @@ customGradient = colorStepsToGradient [(-1, withOpacity blue 0.3), (0, withOpaci
 defaultColors :: [(Double, AlphaColour Double)]
 defaultColors = [(-1, opaque blue), (0, opaque white), (1, opaque red)]
 
-colorStepsToGradient :: [(Double, AlphaColour Double)] -> (Double -> AlphaColour Double)
-colorStepsToGradient = aux
-  where
-    aux ((z1, c1) : (z2, c2) : rest) z
-        | z <= z1 = c1
-        | z <= z2 = blend ((z - z1) / (z2 - z1)) c2 c1
-        | otherwise = aux ((z2, c2) : rest) z
-    aux [(_, c1)] _ = c1
-    aux [] _ = opaque white
-
 -- defaultGradient :: PlotValue z => z -> AlphaColour Double
 defaultGradient :: Double -> AlphaColour Double
 defaultGradient = colorStepsToGradient defaultColors
