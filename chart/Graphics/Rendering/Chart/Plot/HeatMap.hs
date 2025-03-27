@@ -67,42 +67,45 @@ plotHeatMap ::
   Plot x y
 plotHeatMap phm =
   Plot
-    { _plot_render = renderPlotHeatMap phm
+    { _plot_render = renderPlotHeatMap zs phm
     , _plot_legend =
         [ (_plot_heatmap_title phm, const (return ()))
         , ("-1", const (return ()))
-        , (" ", renderPlotLegendHeatMap (-1, 1) phm)
+        , (" ", renderPlotLegendHeatMap (minZ, maxZ) phm)
+        , (" ", const (return ()))
         , ("1", const (return ()))
         ]
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
     }
+    where 
+      zs = map (_plot_heatmap_mapf phm) $ _plot_heatmap_grid phm
+      minZ = foldr min (head zs) zs
+      maxZ = foldr max (head zs) zs
+
 
 {- | Render a heat map plot. This function is typically not called directly,
 but is used by the chart rendering system.
 -}
 renderPlotHeatMap ::
   (PlotValue x, PlotValue y) =>
+  [Double] ->
   PlotHeatMap x y ->
   PointMapFn x y ->
   BackendProgram ()
-renderPlotHeatMap p pmap =
-  mapM_ draw (_plot_heatmap_grid p)
+renderPlotHeatMap zs phm pmap =
+  mapM_ draw (zip zs (_plot_heatmap_grid phm))
  where
-  draw xy = drawRectangle (mapXY pmap xy) rect
+  draw (z,xy) = drawRectangle (mapXY pmap xy) rect
    where
     rect =
       def
         { _rect_minsize = (unitX + 1, unitY - 1) -- +-1 to fix white lines :/
         , _rect_fillStyle = Just (FillStyleSolid c)
         }
-
-    z = f xy
     c = gradient z
+  gradient = _plot_heatmap_gradient phm
 
-  f = _plot_heatmap_mapf p
-  gradient = _plot_heatmap_gradient p
-
-  (pts_x, pts_y) = unzip $ _plot_heatmap_grid p
+  (pts_x, pts_y) = unzip $ _plot_heatmap_grid phm
   (min_x, max_x) = minmax pts_x
   (min_y, max_y) = minmax pts_y
 
@@ -130,7 +133,7 @@ renderPlotLegendHeatMap (minValue, maxValue) p (Rect p1 p2) = do
   Vector areaW areaH = psub p2 p1
 
   nsamples = 50
-  w = 5 * areaW / nsamples
+  w = 4.5 * areaW / nsamples
   gradie = _plot_heatmap_gradient p
 
   lerp t v1 v2 = t * v2 + (1 - t) * v1
