@@ -49,7 +49,7 @@ plotHeatMap ::
 plotHeatMap phm =
   Plot
     { _plot_render = renderPlotHeatMap phm
-    , _plot_legend = [(_plot_heatmap_title phm, renderPlotLegendHeatMap phm)]
+    , _plot_legend = [(_plot_heatmap_title phm, const(return () )), ("-1", const(return () )) ,(" ", renderPlotLegendHeatMap (-1, 1) phm), ("1", const(return () )) ]
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
     }
 
@@ -92,14 +92,28 @@ renderPlotHeatMap p pmap =
 minmax :: (Ord a) => [a] -> (a, a)
 minmax x = (foldl min (head x) x, foldl max (head x) x)
 
-renderPlotLegendHeatMap :: PlotHeatMap x y z -> Rect -> BackendProgram ()
-renderPlotLegendHeatMap p (Rect p1 p2) = do
-  drawPoint ps (Point (p_x p1) y)
-  drawPoint ps (Point ((p_x p1 + p_x p2) / 2) y)
-  drawPoint ps (Point (p_x p2) y)
- where
-  ps = def
-  y = (p_y p1 + p_y p2) / 2
+renderPlotLegendHeatMap :: (Double, Double) -> PlotHeatMap x y z -> Rect -> BackendProgram ()
+renderPlotLegendHeatMap (minValue,maxValue) p (Rect p1 p2) = do
+  -- drawPoint def p1
+  mapM_ drawR [0..nsamples]
+
+  where
+    Vector areaW areaH = psub p2 p1
+
+    nsamples = 50
+    w = 3 * areaW / nsamples
+    gradie = _plot_heatmap_gradient p
+
+    lerp t v1 v2 = t * v2 + (1-t) * v1
+    drawR n = drawRectangle (pvadd p1 (Vector (n*w) 0)) rect
+
+      where
+        c = gradie (lerp (n / nsamples) minValue maxValue)
+        rect =
+          def
+            { _rect_minsize = (w,areaH)
+            , _rect_fillStyle = Just (FillStyleSolid c)
+            }
 
 defaultColors :: [(Double, AlphaColour Double)]
 defaultColors = [(-1, opaque blue), (0, opaque white), (1, opaque red)]
