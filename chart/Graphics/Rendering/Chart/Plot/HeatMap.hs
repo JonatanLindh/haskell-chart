@@ -77,11 +77,10 @@ plotHeatMap phm =
         ]
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
     }
-    where 
-      zs = map (_plot_heatmap_mapf phm) $ _plot_heatmap_grid phm
-      minZ = foldr min (head zs) zs
-      maxZ = foldr max (head zs) zs
-
+ where
+  zs = map (_plot_heatmap_mapf phm) $ _plot_heatmap_grid phm
+  minZ = foldr min (head zs) zs
+  maxZ = foldr max (head zs) zs
 
 {- | Render a heat map plot. This function is typically not called directly,
 but is used by the chart rendering system.
@@ -95,7 +94,7 @@ renderPlotHeatMap ::
 renderPlotHeatMap zs phm pmap =
   mapM_ draw (zip zs (_plot_heatmap_grid phm))
  where
-  draw (z,xy) = drawRectangle (mapXY pmap xy) rect
+  draw (z, xy) = drawRectangle (mapXY pmap xy) rect
    where
     rect =
       def
@@ -150,7 +149,7 @@ renderPlotLegendHeatMap (minValue, maxValue) p (Rect p1 p2) = do
 middle values, and red for high values. The values are mapped from -1 to 1.
 -}
 defaultColors :: [(Double, AlphaColour Double)]
-defaultColors = [(-1, opaque blue), (0, opaque black), (1, opaque red)]
+defaultColors = [(-1, opaque blue), (0, opaque white), (1, opaque red)]
 
 {- | Convert a list of (value, color) pairs to a continuous gradient function.
 The function linearly interpolates between adjacent colors for values between
