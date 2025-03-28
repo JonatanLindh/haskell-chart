@@ -18,7 +18,7 @@ useful for visualizing matrix-like data or continuous functions over a
 -}
 module Graphics.Rendering.Chart.Plot.HeatMap (
   PlotHeatMap (..),
-  plot_heatmap_title,
+  plot_heatmap_legend_text,
   plot_heatmap_gradient,
   plot_heatmap_grid,
   plot_heatmap_mapf,
@@ -46,7 +46,7 @@ import Graphics.Rendering.Chart.Renderable (Rectangle (_rect_fillStyle, _rect_mi
 mapping from (x,y) coordinates to values that are represented as colors.
 -}
 data PlotHeatMap x y = HeatMap
-  { _plot_heatmap_title :: String
+  { _plot_heatmap_legend_text :: String
   -- ^ The title of the heat map plot, used in legends.
   , _plot_heatmap_gradient :: Double -> AlphaColour Double
   -- ^ A function that maps values to colors. The default colors expect
@@ -69,7 +69,7 @@ plotHeatMap phm =
   Plot
     { _plot_render = renderPlotHeatMap zs phm
     , _plot_legend =
-        [ (_plot_heatmap_title phm, const (return ()))
+        [ (_plot_heatmap_legend_text phm, const (return ()))
         , (show minZ, const (return ()))
         , (" ", renderPlotLegendHeatMap (minZ, maxZ) phm)
         , (" ", const (return ()))
@@ -179,7 +179,7 @@ constant value 1. This is meant to be customized using lens setters.
 defaultHeatMap :: (PlotValue x, PlotValue y) => PlotHeatMap x y
 defaultHeatMap =
   HeatMap
-    { _plot_heatmap_title = "Heatmap: Default"
+    { _plot_heatmap_legend_text = "Heatmap: Default"
     , _plot_heatmap_gradient = defaultGradient
     , _plot_heatmap_grid = []
     , _plot_heatmap_mapf = const 1

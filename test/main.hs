@@ -12,6 +12,7 @@ import Graphics.Rendering.Chart.Backend.Cairo
 import Graphics.Rendering.Chart.Easy
 import Graphics.Rendering.Chart.Gtk
 import Numeric.Noise.Perlin
+import Graphics.Rendering.Chart.Plot.HeatMap (plot_heatmap_legend_text)
 
 {- | Creates a square grid of points with specified size and step.
 
@@ -42,7 +43,7 @@ Uses a 500x500 grid for high resolution, which can be computationally intensive.
 proceduralEarthMap = do
     layout_title .= "Procedural Earth-map"
     plot $ fmap plotHeatMap $ liftEC $ do
-        plot_heatmap_title .= "Height"
+        plot_heatmap_legend_text .= "Height"
         plot_heatmap_mapf .= noisef
         plot_heatmap_grid .= square 500 1
         plot_heatmap_gradient .= colorStepsToGradient earthColors
@@ -87,7 +88,7 @@ efficient.
 heatmapGraph = do
     layout_title .= "Cool sin waves function thing"
     plot $ fmap plotHeatMap $ liftEC $ do
-        plot_heatmap_title .= "f(x, y)"
+        plot_heatmap_legend_text .= "f(x, y)"
         plot_heatmap_mapf .= coolSinf
         plot_heatmap_grid .= square 70 1
 
@@ -105,7 +106,7 @@ coolSinf (x, y) = sin (((0.1 * x) ^ 2) + ((0.1 * y) ^ 2))
 sunInTheSkyMap = do
     layout_title .= "Sun In The Sky"
     plot $ fmap plotHeatMap $ liftEC $ do
-        plot_heatmap_title .= "HEAT"
+        plot_heatmap_legend_text .= "HEAT"
         plot_heatmap_mapf .= sunInTheSkyF
         plot_heatmap_grid .= square 70 1
         plot_heatmap_gradient .= colorStepsToGradient sunInTheSkyColors
