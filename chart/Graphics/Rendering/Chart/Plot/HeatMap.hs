@@ -70,10 +70,10 @@ plotHeatMap phm =
     { _plot_render = renderPlotHeatMap zs phm
     , _plot_legend =
         [ (_plot_heatmap_title phm, const (return ()))
-        , ("-1", const (return ()))
+        , (show minZ, const (return ()))
         , (" ", renderPlotLegendHeatMap (minZ, maxZ) phm)
         , (" ", const (return ()))
-        , ("1", const (return ()))
+        , (show maxZ, const (return ()))
         ]
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
     }

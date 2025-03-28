@@ -7,7 +7,7 @@ square :: Double -> Double -> [(Double, Double)]
 square a s = [(x, y) | x <- range, y <- range] where range = [-a, -a + s .. a]
 
 main :: IO ()
-main = toFile def "map.png" proceduralEarthMap
+main = toFile def "suninthesky.png" sunInTheSkyMap
 
 heatmapGraph = do
     layout_title .= "Cool sin waves function thing"
@@ -48,4 +48,24 @@ earthColors =
     , (0.6, opaque dimgray)
     , (0.95, opaque dimgray)
     , (1, opaque white)
+    ]
+
+sunInTheSkyMap = do
+    layout_title .= "Sun In The Sky"
+    plot $ fmap plotHeatMap $ liftEC $ do
+        plot_heatmap_title .= "HEAT"
+        plot_heatmap_mapf .= sunInTheSkyF
+        plot_heatmap_grid .= square 70 1
+        plot_heatmap_gradient .= colorStepsToGradient sunInTheSkyColors
+
+sunInTheSkyF (0,0) = 100
+sunInTheSkyF (x,y) = min 100 (100/sqrt ((0.05* x)^2 + (0.05 * y)^2))
+
+sunInTheSkyColors =
+    [ (0, opaque black)
+    , (40, opaque deepskyblue)
+    , (70, opaque orange)
+    , (90, opaque red)
+    , (99.95, opaque yellow)
+    , (100, opaque white)
     ]
