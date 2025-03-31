@@ -29,20 +29,18 @@ module Graphics.Rendering.Chart.Plot.HeatMap (
 ) where
 
 import Control.Lens
-import Data.Colour (
-  AlphaColour,
-  black,
-  blend,
-  opaque,
- )
-import Data.Colour.Names (blue, red, white)
+import Data.Colour
+import Data.Colour.Names
 import Data.Default.Class
+import Data.Maybe (fromMaybe)
 import Graphics.Rendering.Chart.Axis.Types (PlotValue (toValue))
 import Graphics.Rendering.Chart.Drawing
 import Graphics.Rendering.Chart.Geometry hiding (xy)
 import Graphics.Rendering.Chart.Plot.Types
-import Graphics.Rendering.Chart.Renderable (Rectangle (_rect_fillStyle, _rect_minsize), drawRectangle)
-import Data.Maybe (fromMaybe)
+import Graphics.Rendering.Chart.Renderable (
+  Rectangle (_rect_fillStyle, _rect_minsize),
+  drawRectangle,
+ )
 
 {- | A specification for a heat map plot. A heat map visualizes a function
 mapping from (x,y) coordinates to values that are represented as colors.
@@ -50,14 +48,17 @@ mapping from (x,y) coordinates to values that are represented as colors.
 data PlotHeatMap x y = HeatMap
   { _plot_heatmap_legend_text :: String
   -- ^ The title of the heat map plot, used in legends.
-  , _plot_heatmap_legend_minmax :: Maybe (Double,Double)
+  , _plot_heatmap_legend_minmax :: Maybe (Double, Double)
+  -- ^ Labels for the legend-gradient. Default is to use min/max found in
+  -- the heatmap
   , _plot_heatmap_gradient :: Double -> AlphaColour Double
   -- ^ A function that maps values to colors. The default colors expect
   -- z-values that are normalized to [-1, 1]. This can be customized however.
   , _plot_heatmap_grid :: [(x, y)]
   -- ^ The grid points at which to sample the mapping function.
   , _plot_heatmap_mapf :: (x, y) -> Double
-  -- ^ The function that maps coordinates to values, which will then be mapped to colors.
+  -- ^ The function that maps coordinates to values, which will then be mapped
+  -- to colors.
   }
 
 {- | Convert a 'PlotHeatMap' to a 'Plot', which can be rendered on a chart.
@@ -74,8 +75,8 @@ plotHeatMap phm =
     , _plot_legend =
         [ (_plot_heatmap_legend_text phm, const (return ()))
         , (show minZ, const (return ()))
-        , (" ", renderPlotLegendHeatMap (minZ, maxZ) phm) -- Gradient 
-        , (" ", const (return ())) --Empty legend to give gradient space
+        , (" ", renderPlotLegendHeatMap (minZ, maxZ) phm) -- Gradient
+        , (" ", const (return ())) -- Empty legend to give gradient space
         , (show maxZ, const (return ()))
         ]
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
@@ -83,7 +84,7 @@ plotHeatMap phm =
  where
   mima = _plot_heatmap_legend_minmax phm
   zs = map (_plot_heatmap_mapf phm) $ _plot_heatmap_grid phm
-  (minZ,maxZ) = fromMaybe (minmax zs) mima
+  (minZ, maxZ) = fromMaybe (minmax zs) mima
 
 {- | Render a heat map plot. This function is typically not called directly,
 but is used by the chart rendering system.
@@ -128,10 +129,11 @@ minmax :: (Ord a) => [a] -> (a, a)
 minmax xs = (foldr min (head xs) xs, foldr max (head xs) xs)
 
 {- | Renders the heatmap legend gradient.
-  Uses precalulcated min/max values of the heatmap 
+  Uses precalulcated min/max values of the heatmap
   and samples the gradient linearly between them.
 -}
-renderPlotLegendHeatMap :: (Double, Double) -> PlotHeatMap x y -> Rect -> BackendProgram ()
+renderPlotLegendHeatMap ::
+  (Double, Double) -> PlotHeatMap x y -> Rect -> BackendProgram ()
 renderPlotLegendHeatMap (minValue, maxValue) p (Rect p1 p2) = do
   mapM_ drawR [0 .. nsamples]
  where
