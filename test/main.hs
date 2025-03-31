@@ -11,8 +11,8 @@
 import Graphics.Rendering.Chart.Backend.Cairo
 import Graphics.Rendering.Chart.Easy
 import Graphics.Rendering.Chart.Gtk
-import Numeric.Noise.Perlin
 import Graphics.Rendering.Chart.Plot.HeatMap (plot_heatmap_legend_text)
+import Numeric.Noise.Perlin
 
 {- | Creates a square grid of points with specified size and step.
 
@@ -98,24 +98,36 @@ the sine of the squared distance from the origin (scaled by 0.1).
 coolSinf :: (Double, Double) -> Double
 coolSinf (x, y) = sin (((0.1 * x) ^ 2) + ((0.1 * y) ^ 2))
 
-
 ---------------------------------------
 -------------- EXAMPLE 3 --------------
 --------------------------------------
 
+{- | 'sunInTheSkyMap' creates a heat map visualization that looks like a
+sun in the sky :)
+-}
 sunInTheSkyMap = do
     layout_title .= "Sun In The Sky"
     plot $ fmap plotHeatMap $ liftEC $ do
         plot_heatmap_legend_text .= "HEAT"
         plot_heatmap_legend_minmax .= Just (0, 100)
         plot_heatmap_mapf .= sunInTheSkyF
-        plot_heatmap_grid .= square 10  0.02
+        plot_heatmap_grid .= square 10 0.02
         plot_heatmap_gradient .= colorStepsToGradient sunInTheSkyColors
 
+{- | 'sunInTheSkyF' computes the heat value for a given coordinate.
+At the origin, the value is set to 100; for other coordinates, the function
+scales the value based on the inverse distance from the origin, with an
+upper bound of 100.
+-}
 sunInTheSkyF :: (Double, Double) -> Double
-sunInTheSkyF (0,0) = 100
-sunInTheSkyF (x,y) = min 100 (80/sqrt (x^2 + y^2))
+sunInTheSkyF (0, 0) = 100
+sunInTheSkyF (x, y) = min 100 (80 / sqrt (x ^ 2 + y ^ 2))
 
+{- | 'sunInTheSkyColors' defines the gradient used in the 'sunInTheSkyMap'.
+It specifies key color-stop pairs that map numeric heat values to colors,
+transitioning from black through deepskyblue, orange, red, yellow, and finally
+white.
+-}
 sunInTheSkyColors :: [(Double, AlphaColour Double)]
 sunInTheSkyColors =
     [ (0, opaque black)
