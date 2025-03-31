@@ -19,6 +19,7 @@ useful for visualizing matrix-like data or continuous functions over a
 module Graphics.Rendering.Chart.Plot.HeatMap (
   PlotHeatMap (..),
   plot_heatmap_legend_text,
+  plot_heatmap_legend_minmax,
   plot_heatmap_gradient,
   plot_heatmap_grid,
   plot_heatmap_mapf,
@@ -41,6 +42,7 @@ import Graphics.Rendering.Chart.Drawing
 import Graphics.Rendering.Chart.Geometry hiding (xy)
 import Graphics.Rendering.Chart.Plot.Types
 import Graphics.Rendering.Chart.Renderable (Rectangle (_rect_fillStyle, _rect_minsize), drawRectangle)
+import Data.Maybe (fromMaybe)
 
 {- | A specification for a heat map plot. A heat map visualizes a function
 mapping from (x,y) coordinates to values that are represented as colors.
@@ -48,6 +50,7 @@ mapping from (x,y) coordinates to values that are represented as colors.
 data PlotHeatMap x y = HeatMap
   { _plot_heatmap_legend_text :: String
   -- ^ The title of the heat map plot, used in legends.
+  , _plot_heatmap_legend_minmax :: Maybe (Double,Double)
   , _plot_heatmap_gradient :: Double -> AlphaColour Double
   -- ^ A function that maps values to colors. The default colors expect
   -- z-values that are normalized to [-1, 1]. This can be customized however.
@@ -78,9 +81,9 @@ plotHeatMap phm =
     , _plot_all_points = unzip $ _plot_heatmap_grid phm
     }
  where
+  mima = _plot_heatmap_legend_minmax phm
   zs = map (_plot_heatmap_mapf phm) $ _plot_heatmap_grid phm
-  minZ = foldr min (head zs) zs
-  maxZ = foldr max (head zs) zs
+  (minZ,maxZ) = fromMaybe (minmax zs) mima
 
 {- | Render a heat map plot. This function is typically not called directly,
 but is used by the chart rendering system.
@@ -122,7 +125,7 @@ renderPlotHeatMap zs phm pmap =
 Returns a tuple of (minimum, maximum). The list must be non-empty.
 -}
 minmax :: (Ord a) => [a] -> (a, a)
-minmax x = (foldl min (head x) x, foldl max (head x) x)
+minmax xs = (foldr min (head xs) xs, foldr max (head xs) xs)
 
 {- | Renders the heatmap legend gradient.
   Uses precalulcated min/max values of the heatmap 
@@ -183,6 +186,7 @@ defaultHeatMap :: (PlotValue x, PlotValue y) => PlotHeatMap x y
 defaultHeatMap =
   HeatMap
     { _plot_heatmap_legend_text = "Heatmap: Default"
+    , _plot_heatmap_legend_minmax = Nothing
     , _plot_heatmap_gradient = defaultGradient
     , _plot_heatmap_grid = []
     , _plot_heatmap_mapf = const 1

@@ -107,13 +107,14 @@ sunInTheSkyMap = do
     layout_title .= "Sun In The Sky"
     plot $ fmap plotHeatMap $ liftEC $ do
         plot_heatmap_legend_text .= "HEAT"
+        plot_heatmap_legend_minmax .= Just (0, 100)
         plot_heatmap_mapf .= sunInTheSkyF
-        plot_heatmap_grid .= square 70 1
+        plot_heatmap_grid .= square 10  0.02
         plot_heatmap_gradient .= colorStepsToGradient sunInTheSkyColors
 
 sunInTheSkyF :: (Double, Double) -> Double
 sunInTheSkyF (0,0) = 100
-sunInTheSkyF (x,y) = min 100 (100/sqrt ((0.05* x)^2 + (0.05 * y)^2))
+sunInTheSkyF (x,y) = min 100 (80/sqrt (x^2 + y^2))
 
 sunInTheSkyColors :: [(Double, AlphaColour Double)]
 sunInTheSkyColors =
