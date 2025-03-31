@@ -124,9 +124,12 @@ Returns a tuple of (minimum, maximum). The list must be non-empty.
 minmax :: (Ord a) => [a] -> (a, a)
 minmax x = (foldl min (head x) x, foldl max (head x) x)
 
+{- | Renders the heatmap legend gradient.
+  Uses precalulcated min/max values of the heatmap 
+  and samples the gradient linearly between them.
+-}
 renderPlotLegendHeatMap :: (Double, Double) -> PlotHeatMap x y -> Rect -> BackendProgram ()
 renderPlotLegendHeatMap (minValue, maxValue) p (Rect p1 p2) = do
-  -- drawPoint def p1
   mapM_ drawR [0 .. nsamples]
  where
   Vector areaW areaH = psub p2 p1
